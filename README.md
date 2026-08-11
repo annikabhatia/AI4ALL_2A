@@ -34,3 +34,7 @@ Python · Pandas · NumPy · Seaborn · scikit-learn · Google Colab
 ## Usage
 
 Open `credit_card_fraud_detection_updated.ipynb` in Google Colab (badge linked in the notebook) or Jupyter. Update the data path to point to your local copy of `train_transaction.csv`, then run cells sequentially.
+
+## Team
+
+This project was built by 4 AI4ALL fellows.

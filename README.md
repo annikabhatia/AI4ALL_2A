@@ -6,6 +6,10 @@ A machine learning project built during the AI4ALL AI Fellowship to detect fraud
 
 This project analyzes 1M+ credit card transactions across two linked datasets to identify anomalous spending patterns indicative of fraud. Built collaboratively with a team of 3 AI4ALL fellows, the model captures 82.8% of fraudulent transactions (0.95 ROC-AUC) while minimizing false-positive review costs.
 
+## Live Demo
+
+**[Try the app](https://ai4all2a-hg8xmydpthagr86f3bubye.streamlit.app/)**
+
 ## Dataset
 
 - **Source:** IEEE-CIS Fraud Detection dataset (transaction + identity data)

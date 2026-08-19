@@ -21,7 +21,7 @@ are used to evaluate transaction risk in real time.
 @st.cache_resource
 def load_artifacts():
     try:
-        model = joblib.load("fraud_model.pkl")
+        model = joblib.load("xgb_fraud_model.pkl")
         features = joblib.load("model_features.pkl")
         return model, features
     except Exception as e:

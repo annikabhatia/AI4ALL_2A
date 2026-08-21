@@ -56,6 +56,10 @@ The pipeline is integrated with an interactive [Streamlit Application](https://a
 * Synthesize feature values ($V_1–V_{339}$, $C_1–C_{14}$, $D_1–D_{15}$) in real time to observe model decision boundaries.
 * Stream synthetic batches to evaluate throughput and false-positive flags.
 
+### Streamlit Dashboard Interface
+![Streamlit Dashboard Preview](dashboard_preview.png)
+
+*Our interactive dashboard allows users to synthesize feature values and stream batches to evaluate fraud detection in real-time.*
 ---
 
 ## Limitations, Ethics & Future Work

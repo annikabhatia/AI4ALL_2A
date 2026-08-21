@@ -1,44 +1,90 @@
-# Credit Card Fraud Detection
+# Credit Card Fraud Detection with Scalable Machine Learning
 
-A machine learning project built during the AI4ALL AI Fellowship to detect fraudulent credit card transactions using real-world financial data.
+Built during the **AI4ALL Ignite Accelerator**, this project establishes a scalable machine learning and deep learning fraud detection pipeline evaluated on over 590,000 real-world e-commerce transactions. By addressing extreme class imbalance through custom focal loss architectures and cost-sensitive boosting, the system achieves an **82.80% fraud recall** and a **0.9515 ROC-AUC**, protecting consumers while minimizing false-positive operational overhead.
 
-## Overview
+* **Live Interactive Demo:** [Streamlit Dashboard](https://ai4all2a-hg8xmydpthagr86f3bubye.streamlit.app/)
+* **Project Poster:** [Google Slides Poster](https://docs.google.com/presentation/d/1F_3GB4kGSd-pOoXvJ9uBWLfZNyNURko65H8SXACZynY/edit)
+* **Final Presentation:** [Showcase Deck](https://docs.google.com/presentation/d/1Isa8MpG_EKpsnCZTqUqPVIQoa6r8-AW0bQSv9GLldBg/edit)
 
-This project analyzes 1M+ credit card transactions across two linked datasets to identify anomalous spending patterns indicative of fraud. Built collaboratively with a team of 3 AI4ALL fellows, the model captures 82.8% of fraudulent transactions (0.95 ROC-AUC) while minimizing false-positive review costs.
+---
 
-## Live Demo
+## Problem Statement & Motivation
 
-**[Try the app](https://ai4all2a-hg8xmydpthagr86f3bubye.streamlit.app/)**
+Digital payment fraud inflicts billions of dollars in losses annually and disrupts financial integrity across global payment rails. Traditional fraud prevention relies on rigid rule-based systems that struggle against novel attack patterns or raw accuracy-optimized classifiers that overlook fraudulent minority classes. In production environments where fraudulent activity accounts for only ~3.5% of total volume, optimizing for accuracy results in high false-negative rates that directly harm consumers. This project automates proactive, real-time fraud defense, prioritizing minority-class recall and ethical accountability.
 
-## Dataset
+### Research Question
+> *"Can we accurately predict whether a transaction is fraudulent based on anonymized transaction and identity signatures using supervised and deep learning classification models?"*
 
-- **Source:** IEEE-CIS Fraud Detection dataset (transaction + identity data)
-- **Size:** 590,540 transactions, 394 raw features
-- **Target:** `isFraud` (binary), with a heavily imbalanced positive class (~3.5% fraud rate)
-- **Features:** transaction amount, product code, card/address/distance info, email domains, count features (C1–C14), time-delta features (D1–D15), match features (M1–M9), and 300+ anonymized engineered features (V1–V339)
+---
 
-## Approach
+## Key Results
 
-1. **EDA** — explored transaction structure, class imbalance, and feature distributions
-2. **Missing value handling** — identified and dropped 55 columns with >80% missing data (394 → 339 features)
-3. **Feature engineering** — built features to surface anomalous spending signals
-4. **Classification modeling** — trained models to flag fraudulent transactions
-5. **Evaluation** — tuned for recall on the fraud class while controlling false positives
+1. **High Fraud Detection Rate:** XGBoost delivered the strongest overall detection performance, capturing **82.80% of fraudulent transactions** with a **0.9515 ROC-AUC**.
+2. **Imbalanced Deep Learning:** Engineered a Feed-Forward Deep Neural Network with **Binary Focal Cross-Entropy Loss**, achieving **78.44% recall** and a **0.9400 ROC-AUC** without synthetic oversampling.
+3. **Data Quality & Dimensionality Optimization:** Resolved high data sparsity by shifting missingness thresholds to 50% (marking missing values explicitly as `'missing'`), streamlining the feature space from 394 to 339 predictive columns.
+4. **Live Streamlit Deployment:** Deployed an interactive risk evaluation interface featuring single transaction simulation, synthetic parameter manipulation, and batch data inference.
 
-## Results
+---
 
-- **82.8%** of fraudulent transactions correctly identified
-- **0.95 ROC-AUC**
-- False-positive rate minimized to reduce downstream review costs
+## Methodologies & Technical Architecture
 
-## Tech Stack
+### 1. Data Cleaning & Feature Engineering
+* **Missing Value Imputation:** Features with $>50\%$ missing values were retained and tagged with explicit `'missing'` categorical indicators to prevent skewing numerical distributions.
+* **Velocity & Identity Signals:** Extracted transaction frequency spikes over short sliding time windows and engineered `email_domain_match` flags to isolate credential-stuffing and identity-theft patterns.
 
-Python · Pandas · NumPy · Seaborn · scikit-learn · Google Colab
+### 2. Multi-Model Benchmarking
 
-## Usage
+| Model Architecture | ROC-AUC | Recall (Fraud) | Accuracy | F1-Score | Key Trade-Off Analysis |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **XGBoost (Selected)** | **0.9515** | **82.80%** | 92.54% | **0.4373** | Highest recall; rapid inference on tabular data; tuned positive class weights. |
+| **Deep Neural Network** | 0.9400 | 78.44% | 92.48% | 0.4220 | Multi-layer dense net with Binary Focal Loss; captures complex non-linear interactions. |
+| **Random Forest** | 0.9120 | 63.00% | 97.10% | 0.5400 | High precision (0.54), but missed 37% of fraud cases due to conservative thresholding. |
+| **Support Vector Machine** | — | — | — | — | Computationally infeasible; $O(n^2)$ complexity unscalable on 590k samples. |
 
-Open `credit_card_fraud_detection_updated.ipynb` in Google Colab (badge linked in the notebook) or Jupyter. Update the data path to point to your local copy of `train_transaction.csv`, then run cells sequentially.
+* **Deep Neural Network Topology:**
+  * **Layer 1:** 128 units (ReLU) + Dropout (0.3)
+  * **Layer 2:** 64 units (ReLU) + Dropout (0.2)
+  * **Output Layer:** 1 unit (Sigmoid)
+  * **Loss & Optimization:** Binary Focal Cross-Entropy Loss, 25 Epochs, Batch Size 512, Exponential Learning Rate Decay.
 
-## Team
+---
 
-This project was built by 4 AI4ALL fellows.
+## Visualizations & Live Demo
+
+The pipeline is integrated with an interactive [Streamlit Application](https://ai4all2a-hg8xmydpthagr86f3bubye.streamlit.app/) allowing users to:
+* Generate randomized transactions from the IEEE-CIS test split.
+* Synthesize feature values ($V_1–V_{339}$, $C_1–C_{14}$, $D_1–D_{15}$) in real time to observe model decision boundaries.
+* Stream synthetic batches to evaluate throughput and false-positive flags.
+
+---
+
+## Limitations, Ethics & Future Work
+
+* **Algorithmic Accountability:** In fraud detection, missing a fraudulent transaction (false negative) inflicts direct financial harm on victims, whereas a false alarm (false positive) introduces manageable review friction. Our models deliberately optimize for high recall to minimize real-world harm.
+* **Cold-Start Identity Sparsity:** Anonymized identity attributes exhibit high sparsity for first-time cardholders.
+* **Future Directions:**
+  * Implementing **Graph Neural Networks (GNNs)** to model shared device and IP relationship subgraphs.
+  * Building low-latency streaming pipelines using Apache Kafka and Redis for sub-millisecond edge scoring.
+
+---
+
+## Data Sources
+
+* **IEEE-CIS Fraud Detection Dataset:** [Kaggle Competition Data](https://www.kaggle.com/c/ieee-fraud-detection/data) (590,540 e-commerce transactions across linked `train_transaction.csv` and `train_identity.csv`).
+
+## Technologies Used
+
+* **Languages & Core Libraries:** Python, Pandas, NumPy, Scikit-learn
+* **Machine Learning & Deep Learning:** XGBoost, TensorFlow / Keras (Binary Focal Loss)
+* **Visualization & Deployment:** Seaborn, Matplotlib, Streamlit, Google Colab
+
+---
+
+## Authors
+
+Completed by **Group 2A** during the **AI4ALL Ignite Summer Accelerator**:
+
+* **Annika Bhatia** — *Rutgers University* (Computer Science & Data Science)
+* **Maiyun Zhang** — *AI4ALL Fellow*
+* **Patrick Selby** — *Grambling State University* (Cybersecurity & CIS)
+* **Jolaoluwa Amodu** — *Fisk University* (Computer Science)
